@@ -24,11 +24,11 @@
 
             <div class="icongroup">
                 <div>
-                    <span class="iconfont">&#xe507;</span>
+                    <span class="iconfont">&#xe600;</span>
                     <p>评论(100)</p>
                 </div>
                 <div>
-                    <span class="iconfont">&#xe502;</span>
+                    <span class="iconfont">&#xe602;</span>
                     <p>收藏</p>
                 </div>
                 <div>
@@ -55,59 +55,66 @@
                     >
                     </el-input>
                 </div>
-                <div class="reply-btn-box" style="" data-v-8d099d26="">
+                <div class="publish">
+                    <div class="reply-btn-box" style="" data-v-8d099d26="">
                     <button type="button" class="el-button reply-btn el-button--primary el-button--medium">
                         <!---->
                         <!---->
                         <span>发表评论</span>
                     </button>
+                    </div>
+                    <div class="upload">
+                        <el-upload
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            list-type="picture-card"
+                            :on-preview="handlePictureCardPreview"
+                            :on-remove="handleRemove"
+                            >
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
+                        <el-dialog :visible.sync="dialogVisible" size="tiny">
+                            <img width="50%" :src="dialogImageUrl" alt="">
+                        </el-dialog>
+                    </div>
                 </div>
-                <el-upload
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    list-type="picture-card"
-                    :on-preview="handlePictureCardPreview"
-                    :on-remove="handleRemove">
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible" size="tiny">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                </el-dialog>
+                
             </div>
 
-            
     <div class="author-title reply-father">
-        <el-avatar class="header-img" :size="40"></el-avatar>
+        <el-avatar class="header-img" :size="40"><img src="../../static/th03.jpg" alt=""></el-avatar>
         <div class="author-info">
-            <span class="author-name"></span>
-            <span class="author-time"></span>
+            <span class="author-name">webshitian</span>
+            <span class="author-time">2019年10月21日 16:38:40</span>
         </div>
-        <div class="icon-btn">
+        <div class="icon-btn1">
             <span>
-                <i class="iconfont el-icon-s-comment"></i></span>
-            <i class="iconfont el-icon-caret-top"></i>
+                <i class="iconfont">&#xe656;</i>2
+            </span>
+                <i class="iconfont">&#xe61e;</i>15
         </div>
         <div class="talk-box">
             <p>
-                <span class="reply"></span>
+                <span class="reply">【妖火论坛】新帖.发帖 1.有能用的斗鱼云免嘛?2.你们感冒了都吃些什么3.问下💊友们,现在办4.来大哥指点迷津吧!5.这卡不是随时销户的吗6.苹果越狱有问...</span>
             </p>
         </div>
         <div class="reply-box">
             <div  class="author-title">
-                <el-avatar class="header-img" :size="40"></el-avatar>
+                <el-avatar class="header-img" :size="40"><img src="../../static/th02.jpg" alt=""></el-avatar>
                 <div class="author-info">
-                    <span class="author-name"></span>
-                    <span class="author-time"></span>
+                    <span class="author-name">小明</span>
+                    <span class="author-time">2019年10月21日 17:26:41</span>
                 </div>
                 <!--点击出现回复部分-->
                 <div class="icon-btn">
-                    <span >
-                        <i class="iconfont el-icon-s-comment"></i></span>
-                    <i class="iconfont el-icon-caret-top"></i>
+                    <span>
+                        <i class="iconfont">&#xe656;</i>2
+                    </span>
+                        <i class="iconfont">&#xe61e;</i>15
                 </div>
                 <!--游客回复部分-->
                 <div class="talk-box">
                     <p>
-                        <span>回复 :</span>
+                        <span>回复 :确实，这是一个不错的论坛！</span>
                         <span class="reply"></span>
                     </p>
                 </div>
@@ -115,17 +122,54 @@
 
                 </div>
             </div>
-        </div>
-        <div  class="my-reply my-comment-reply">
-            <el-avatar class="header-img" :size="40" ></el-avatar>
-            <div class="reply-info">
-                <div tabindex="0" contenteditable="true" spellcheck="false" placeholder="输入评论..."  class="reply-input reply-comment-input"></div>
+            <div  class="author-title">
+                <el-avatar class="header-img" :size="40"><img src="../../static/th04.jpg" alt=""></el-avatar>
+                <div class="author-info">
+                    <span class="author-name">小明</span>
+                    <span class="author-time">2019年10月21日 17:26:41</span>
+                </div>
+                <!--点击出现回复部分-->
+                <div class="icon-btn">
+                    <span>
+                        <i class="iconfont">&#xe656;</i>2
+                    </span>
+                        <i class="iconfont">&#xe61e;</i>15
+                </div>
+                <!--游客回复部分-->
+                <div class="talk-box">
+                    <p>
+                        <span>回复 :确实，这是一个不错的论坛！</span>
+                        <span class="reply"></span>
+                    </p>
+                </div>
             </div>
-            <div class=" reply-btn-box">
+        </div>
+            
+        <div  class="my-reply my-comment-reply">
+            <el-avatar class="header-img" :size="40" ><img src="../../static/th03.jpg" alt=""></el-avatar>
+            <div class="reply-info" >
+                    <div tabindex="0" contenteditable="true" spellcheck="false" placeholder="输入评论..."    class="reply-input reply-comment-input"></div>
+            </div>
+            <div class="reply-btn-box">
                 <el-button class="reply-btn" size="medium"  type="primary">发表评论</el-button>
             </div>
         </div>
     </div>
+
+ 
+ 
+  <div class="block">
+    <!--<span class="demonstration">完整功能</span>-->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage4"
+      :page-sizes="[2, 4, 6, 8]"
+      :page-size="100"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="100">
+    </el-pagination>
+  </div>
 
         </el-main>
         <!--右侧边栏的攻略部分-->
@@ -193,6 +237,7 @@
             </div>
         </el-aside>
      </el-container>
+
   </div>
 </template>
 
@@ -202,10 +247,21 @@ export default {
       return {
         dialogImageUrl: '',
         dialogVisible: false,
-        textarea: ''
+        textarea: '',
+        currentPage1: 5,
+        currentPage2: 5,
+        currentPage3: 5,
+        currentPage4: 4
       };
     },
     methods: {
+
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },  
       handleRemove(file, fileList) {
         console.log(file, fileList);
       },
@@ -228,6 +284,7 @@ export default {
     margin:0 auto;
     .el-main{
         overflow: visible;
+        line-height: 25px;
     }
     .nav{
         .traval-gl{
@@ -265,6 +322,7 @@ export default {
             span{
                 margin-left: 20px;
             }
+
     }
     .content{
         p{
@@ -302,19 +360,153 @@ export default {
         }
         .reply-info{
             padding-top: 28px;
-            padding-bottom: 14px;
+            // padding-bottom: 14px;
             /deep/ .el-textarea__inner {
                 resize:none
             }
         }
-        .reply-btn-box{
-            position:absolute;
-            top:122px;
-            right:0px;
+        .publish{
+            margin-bottom:10px;
+            .reply-btn-box{
+                position:absolute;
+                top:125px;
+                right:0px;
+            }
+
+            .upload{
+                /deep/.el-upload--picture-card{
+                    margin-top: 10px;
+                    background-color: #fbfdff;
+                    border: 1px dashed #c0ccda;
+                    border-radius: 6px;
+                    box-sizing: border-box;
+                    width: 52px;
+                    height: 52px;
+                    line-height: 54px;
+                    vertical-align: top;
+                }
+            }
+        }
+        
+
+    }
+
+    .author-title{
+        position: relative;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        margin-top: 10px;
+        .header-img{
+            display: inline-block;
+            vertical-align: top;
+        }
+        .author-info{
+            display: inline-block;
+            margin-left: 5px;
+            .author-name{
+                color: #000;
+                font-size: 18px;
+                font-weight: bold;
+                display: block;
+            }
+            .author-time{
+                font-size: 14px;
+                display:block;
+                margin-top:-5px;
+            }
+
+        }
+        .icon-btn1{
+            position: absolute;
+            top:0px;
+            right:20px;
+        }
+        .icon-btn{
+            position: absolute;
+            top:5px;
+            right:10px;
+        }
+        .talk-box{
+            padding-left: 50px;
+            p{  
+                margin-top:5px;
+                margin-bottom: 10px;
+            }
+                
+        }
+        .reply-box{
+            margin-left: 50px;
+            background-color:#efefef;
+            .author-title{
+                padding:10px;
+                border-bottom: 1px solid #ccc; 
+            }
+            .author-title:last-child{
+                border-bottom:none;
+            }
+        }
+        .my-reply{
+            margin-left: 50px;
+            padding-top:10px;
+            position: relative;
+            height: 100px;
+            background-color: #fafbfc;
+            .header-img{
+                margin-left: 10px;
+            }
+            .reply-info {
+                display: inline-block;
+                margin-left: 5px;
+                width: 76%;
+                position: absolute;
+                top: -16px;
+                left: 58px;
+                
+                .reply-input{
+                    min-height: 20px;
+                    line-height: 22px;
+                    padding: 10px 10px;
+                    color: #ccc;
+                    background-color: #fff;
+                    border-radius: 5px;
+                    &:empty:before{
+                        content: attr(placeholder);
+                    }
+                    &:focus:before{
+                        content: none;
+                    }
+                    &:focus{
+                        padding: 8px 8px;
+                        border: 2px solid blue;
+                        box-shadow: none;
+                        outline: none;
+                    }
+                }
+     
+            }
+            .el-button{
+                    margin-top:15px;
+                    float:right;
+                    margin-right:25px;
+                }
         }
     }
-    
+    .block{
+        margin-top:10px;
+        padding:0 10px;
+    }
 
+    
+    
+}
+
+
+
+
+
+.el-aside {
+
+    line-height: 20px;
     //右侧边栏
     .title{
         font-size: 20px;
@@ -344,22 +536,6 @@ export default {
             }
         }
     }
-    
-}
-
-
-
-.el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    line-height: 25px;
-}
-
-.el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    line-height: 20px;
-
 }
 
 
@@ -367,6 +543,7 @@ export default {
 body>.el-container {
     margin-bottom: 40px;
 }
+              
 
 </style>
 
