@@ -12,22 +12,23 @@
                     <span>攻略详情</span>
                 </span>
             </div>
-            <h1>出发地机场_三亚凤凰机场</h1>
-            <span class="art_time">
-                <span>攻略: 2019-05-22 </span>
-                <span>阅读: 1193</span>
-            </span>
-            <div class="content">
-                <p>我始终还记得那年夏天你为了在我路过的城市见我冒着大雨开车几百公里，只为在车站短短的停留……我也记得在街头只因我看了一眼那各式的冰糖葫芦，你穿越熙攘的人群排队为我拿回最后一个糖葫芦欣喜的样子，不是爱吃甜食的我那晚一口气吃掉了那个糖葫芦，而你看着我憋得满嘴和通红的脸只是宠溺的笑笑……我还记得因为我随口一说自己都没在意的东西而你却把它买回来了，就在有次离别的车站，当我不告而别你知道后发疯的电话、视频和在机场着急的身影，手里还提着我自己也不知道什么时候说过的东西时我就知道你就是那个惊艳了时光也温柔了我曾经岁月的人。</p>
-                <img src="../../static/th03.jpg" alt="" height="400px" width="100%">
-            </div>
-
-            <div class="icongroup">
-                <div>
-                    <span class="iconfont">&#xe600;</span>
-                    <p>评论(100)</p>
+            <div v-for="(item,index) in detail"
+            :key="index"> 
+                <h1>{{item.title}}</h1>
+                <span class="art_time">
+                    <span>攻略: {{item.created_at | Upper}} </span>
+                    <span>阅读: {{item.watch}}</span>
+                </span>
+                <div class="content">
+                    <p v-html="item.content"></p>
                 </div>
-                <div>
+
+                <div class="icongroup">
+                <div @click="handleFocus">
+                    <span class="iconfont" >&#xe600;</span>
+                    <p>评论({{item.comments.length}})</p>
+                </div>
+                <div @click="handleStar">
                     <span class="iconfont">&#xe602;</span>
                     <p>收藏</p>
                 </div>
@@ -35,28 +36,35 @@
                     <span class="iconfont">&#xe601;</span>
                     <p>分享</p>
                 </div>
-                <div>
+                <!--点赞功能-->
+                <div @click="handleLike" :class="{like_active:detail.like}">
                     <span class="iconfont">&#xe604;</span>
-                    <p>点赞(54)</p>
+                    <p>点赞({{item.like}})</p>
                 </div>        
             </div>
+            </div>
+            
+            
 
             
             
             <div class="my-reply">
                 <span class="title">评价</span>
-                <div class="reply-info" >
+                <div class="reply-info">
                     <!--<div tabindex="0" contenteditable="true" id="replyInput" spellcheck="false" placeholder="输入评论..." class="reply-input"  style="padding: 8px; border: 2px solid blue;"></div>-->
                     <el-input
                     type="textarea"
                     :rows="2"
                     placeholder="说点什么把...."
                     v-model="textarea"
+                    @focus="handleFocus"
+                    ref="textarea"
                     >
                     </el-input>
                 </div>
-                <div class="publish">
-                    <div class="reply-btn-box" style="" data-v-8d099d26="">
+                <!--发送按钮和上传框-->
+                <div class="publish" v-show="isFocus">
+                    <div class="reply-btn-box" >
                     <button type="button" class="el-button reply-btn el-button--primary el-button--medium">
                         <!---->
                         <!---->
@@ -80,81 +88,53 @@
                 
             </div>
 
-    <div class="author-title reply-father">
-        <el-avatar class="header-img" :size="40"><img src="../../static/th03.jpg" alt=""></el-avatar>
-        <div class="author-info">
-            <span class="author-name">webshitian</span>
-            <span class="author-time">2019年10月21日 16:38:40</span>
-        </div>
-        <div class="icon-btn1">
-            <span>
-                <i class="iconfont">&#xe656;</i>2
-            </span>
-                <i class="iconfont">&#xe61e;</i>15
-        </div>
-        <div class="talk-box">
-            <p>
-                <span class="reply">【妖火论坛】新帖.发帖 1.有能用的斗鱼云免嘛?2.你们感冒了都吃些什么3.问下💊友们,现在办4.来大哥指点迷津吧!5.这卡不是随时销户的吗6.苹果越狱有问...</span>
-            </p>
-        </div>
-        <div class="reply-box">
-            <div  class="author-title">
-                <el-avatar class="header-img" :size="40"><img src="../../static/th02.jpg" alt=""></el-avatar>
+            <!--评论部分的内容-->
+            <div class="author-title reply-father"
+            v-for="(item,index) in dataList"
+            :key="index+1"
+            >   
+                <!--用户的头像-->
+                <el-avatar class="header-img" :size="40">
+                    <img 
+                    :src="$axios.defaults.baseURL + item.account.defaultAvatar"
+                    v-if="item.account.defaultAvatar">
+                    <img src="../../static/th03.jpg" v-else>
+                </el-avatar>
+                <!--用户的信息-->
                 <div class="author-info">
-                    <span class="author-name">小明</span>
-                    <span class="author-time">2019年10月21日 17:26:41</span>
+                    <span class="author-name" v-if="item.account.nickname">{{item.account.nickname}}</span>
+                    <span class="author-name" v-else>小明</span>
+                    <span class="author-time">{{item.account.created_a | Upper}}</span>
                 </div>
-                <!--点击出现回复部分-->
-                <div class="icon-btn">
-                    <span>
-                        <i class="iconfont">&#xe656;</i>2
+                <div class="icon-btn1">
+                    <span @click="handleNew">
+                        <i class="iconfont">&#xe656;</i>{{item.level}}
                     </span>
                         <i class="iconfont">&#xe61e;</i>15
                 </div>
-                <!--游客回复部分-->
                 <div class="talk-box">
                     <p>
-                        <span>回复 :确实，这是一个不错的论坛！</span>
-                        <span class="reply"></span>
+                        <span class="reply">{{item.content}}</span>
                     </p>
                 </div>
-                <div class="reply-box">
+                
+                <!--回复内容-->
+                <CommentFloor v-if="item.parent" :data="item.parent"/>
 
+                <!--消息的回复输入框-->
+                <div  class="my-reply my-comment-reply">
+                    <el-avatar class="header-img" :size="40" >
+                        <img :src="$axios.defaults.baseURL + item.account.defaultAvatar" v-if="item.account.defaultAvatar">
+                        <img src="../../static/th03.jpg" v-else>
+                    </el-avatar>
+                    <div class="reply-info" >
+                            <div tabindex="0" contenteditable="true" spellcheck="false" placeholder="输入评论..."    class="reply-input reply-comment-input"></div>
+                    </div>
+                    <div class="reply-btn-box">
+                        <el-button class="reply-btn" size="medium"  type="primary">发表评论</el-button>
+                    </div>
                 </div>
             </div>
-            <div  class="author-title">
-                <el-avatar class="header-img" :size="40"><img src="../../static/th04.jpg" alt=""></el-avatar>
-                <div class="author-info">
-                    <span class="author-name">小明</span>
-                    <span class="author-time">2019年10月21日 17:26:41</span>
-                </div>
-                <!--点击出现回复部分-->
-                <div class="icon-btn">
-                    <span>
-                        <i class="iconfont">&#xe656;</i>2
-                    </span>
-                        <i class="iconfont">&#xe61e;</i>15
-                </div>
-                <!--游客回复部分-->
-                <div class="talk-box">
-                    <p>
-                        <span>回复 :确实，这是一个不错的论坛！</span>
-                        <span class="reply"></span>
-                    </p>
-                </div>
-            </div>
-        </div>
-            
-        <div  class="my-reply my-comment-reply">
-            <el-avatar class="header-img" :size="40" ><img src="../../static/th03.jpg" alt=""></el-avatar>
-            <div class="reply-info" >
-                    <div tabindex="0" contenteditable="true" spellcheck="false" placeholder="输入评论..."    class="reply-input reply-comment-input"></div>
-            </div>
-            <div class="reply-btn-box">
-                <el-button class="reply-btn" size="medium"  type="primary">发表评论</el-button>
-            </div>
-        </div>
-    </div>
 
  
  
@@ -163,77 +143,38 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage4"
+      :current-page="pageIndex"
       :page-sizes="[2, 4, 6, 8]"
-      :page-size="100"
+      :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="100">
+      :total="comments.length">
     </el-pagination>
   </div>
 
         </el-main>
         <!--右侧边栏的攻略部分-->
-        <el-aside width="250px">
+        <el-aside width="300px">
             <p class="title">相关攻略</p>
-            <div class="vipgonglue">
-                <div class="left">
-                    <img src="../../static/th03.jpg">
-                </div>
-                <div class="right">
-                    <p>桂林踩点</p>
-                    <p class="vipgonglue_time">
-                        <span>2019-05-22 11:45</span>
-                        <span>阅读: 1193</span>
-                    </p>
-                </div>
-            </div>
-            <div class="vipgonglue">
-                <div class="left">
-                    <img src="../../static/th03.jpg">
-                </div>
-                <div class="right">
-                    <p>桂林踩点</p>
-                    <p class="vipgonglue_time">
-                        <span>2019-05-22 11:45</span>
-                        <span>阅读: 1193</span>
-                    </p>
-                </div>
-            </div>
-            <div class="vipgonglue">
-                <div class="left">
-                    <img src="../../static/th03.jpg">
-                </div>
-                <div class="right">
-                    <p>桂林踩点</p>
-                    <p class="vipgonglue_time">
-                        <span>2019-05-22 11:45</span>
-                        <span>阅读: 1193</span>
-                    </p>
-                </div>
-            </div>
-            <div class="vipgonglue">
-                <div class="left">
-                    <img src="../../static/th03.jpg">
-                </div>
-                <div class="right">
-                    <p>桂林踩点</p>
-                    <p class="vipgonglue_time">
-                        <span>2019-05-22 11:45</span>
-                        <span>阅读: 1193</span>
-                    </p>
-                </div>
-            </div>
-            <div class="vipgonglue">
-                <div class="left">
-                    <img src="../../static/th03.jpg">
-                </div>
-                <div class="right">
-                    <p>桂林踩点</p>
-                    <p class="vipgonglue_time">
-                        <span>2019-05-22 11:45</span>
-                        <span>阅读: 1193</span>
-                    </p>
-                </div>
+            <div 
+            v-for="(item,index) in list"
+            :key="index+2"
+            >
+                <nuxt-link :to="`/post/detail?id=${item.id}`" >
+                <!--<nuxt-link :to="`/post/`">-->
+                    <div @click="handleRefresh" class="vipgonglue">
+                        <div class="left">
+                            <img :src="item.images[0]" >
+                        </div>
+                        <div class="right">
+                            <p>{{item.title}}</p>
+                            <p class="vipgonglue_time">
+                                <!--过滤器，直接过滤时间 {{值 | 过滤的方法}}-->
+                                <span>{{item.created_at | Upper}}</span>
+                                <span>阅读: {{item.watch}}</span>
+                            </p>
+                        </div>
+                    </div>
+                </nuxt-link>
             </div>
         </el-aside>
      </el-container>
@@ -242,33 +183,175 @@
 </template>
 
 <script>
+import moment from "moment";
+import CommentFloor from "@/components/post/CommentFloor"
+
 export default {
+    //组件的名字，单纯的针对当前的组件可以通过该名字自己调用自己
+    name:"name",
     data() {
       return {
         dialogImageUrl: '',
         dialogVisible: false,
         textarea: '',
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4
-      };
+        //从flights总列表数据中切割出来数组列表
+        dataList: [],
+        //当前的页数
+        pageIndex:1,
+        //当前的条数
+        pageSize:2,
+        //总条数
+        total:'',
+        //攻略文章的详情
+        detail:{},
+        //相关攻略列表
+        list:[],
+        //输入框是否获取焦点
+        isFocus:false,
+        //评论列表
+        comments:[]
+
+      }
     },
+    //注册组件
+   components:{
+        CommentFloor
+    },
+    
     methods: {
 
+      //分页条数切换时候触发，val是当前的条数  
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+          //切换条数
+          this.pageSize = val;
+          //重新回到第一页
+          this.dataList = this.comments.slice(0,this.pageSize)
       },
+
+
+      //页数切换时候触发,val是当前的页数
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },  
+        //修改当前的页数
+        this.pageIndex = val;
+        //修改回复列表
+        //
+        this.dataList = this.comments.slice(
+            (this.pageIndex - 1) * this.pageSize,
+            this.pageIndex * this.pageSize
+        )
+      }, 
+      
+
       handleRemove(file, fileList) {
         console.log(file, fileList);
       },
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
-      }
+      },
+      
+      //点赞
+      handleLike(){
+          //通过文章id点赞
+          this.$axios({
+              url:"/posts/like?id=" + this.detail[0].id,
+              //添加头信息
+              headers:{
+                  Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+              }
+          }).then(res => {
+              const {message} = res.data;
+              if(message === '用户已经点赞'){
+                    //修改点赞的按钮的状态
+                    this.detail.like = false;
+                    
+              }
+          })
+      },
+      //点赞
+      handleStar(){
+          //通过文章id收藏
+          this.$axios({
+              url:"/posts/star?id=" + this.detail[0].id,
+              //添加头信息
+              headers:{
+                  Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+              }
+          }).then(res => {
+              console.log(res)
+          })   
+      },
+       //获取焦点的时候触发 
+       handleFocus(){
+           this.isFocus = true;
+           this.$refs.textarea.focus();
+           
+       },
+       //点击消息
+       handleNew(){
+           this.isFocus = ture;
+       },
+       //重新加载页面(有问题)
+       handleRefresh(){
+            this.$axios({
+                url:"/posts/?id="+id 
+            }).then(res => {
+                const {data} = res.data;    
+                //保存到详情
+                this.detail = data;
+                this.detail.created_at = moment(this.detail.created_at).format(`YYYY-MM-DD h:mm:ss`);
+            })
+       }
+                   
+},
+// 声明一个本地的过滤器
+    filters: {
+           //value代表的是过滤的值
+    　　　　Upper: function (value) {
+           return moment(value).format(`YYYY-MM-DD h:mm:ss`);
+        }   
+        
+　　  },
+    
+    mounted(){  
+        //请求攻略文章的详情
+        const {id} = this.$nuxt.$route.query;
+        this.$axios({
+            url:"/posts/?id="+id 
+        }).then(res => {
+            const {data} = res.data;    
+            //保存到详情
+            this.detail = data;
+            console.log('1231231231',this.detail);
+            this.detail.created_at = moment(this.detail.created_at).format(`YYYY-MM-DD h:mm:ss`);
+           
+        }),
+
+
+        //获取相关攻略的列表(推荐文章)
+            this.$axios({
+                url:"/posts/recommend"
+            }).then(res => {
+                const {data} = res.data;
+                this.list = data;
+                
+        })
+        //请求文章评论
+        // const {id} = this.$route.params;
+           this.$axios({
+               url:"/posts/comments/",
+           }).then(res => {
+                const {data} = res.data;
+                this.comments = data;
+                // console.log(this.comments)
+
+                //第一页的数据
+                this.dataList = this.comments.slice(0,this.pageSize)
+                
+                // this.dataList = this.comment.length;
+           }) 
+           
+
     }
 
 }
@@ -276,9 +359,6 @@ export default {
 
 <style scoped lang="less">
 
-*{
-    
-}
 .container{
     width:1000px;
     margin:0 auto;
@@ -309,28 +389,36 @@ export default {
         }
     }
     h1{
-            padding: 20px 0;
-            border-bottom: 1px solid #ddd;        
+        font-size: 31px;
+        padding: 20px 0;
+        border-bottom: 1px solid #ddd;   
+        line-height: 40px;     
     }
     .art_time{
-            font-size: 0.8rem;
+            font-size: 16px;
             line-height: 3.24rem;
             text-align: right;
             color: #999;
             padding: 20px;
-            margin-left: 460px;
+            display:flex;
+            justify-content: flex-end;;
             span{
                 margin-left: 20px;
             }
 
     }
     .content{
-        p{
-            margin-bottom:25px;
-        }
-        img{
-            // padding-bottom:80px;
-        }
+    /deep/p{
+                margin-bottom:25px; 
+                img{
+                    max-width: 700px!important;
+                }
+                span{
+                    img{
+                        max-width: 700px!important;
+                    }  
+                }      
+            }    
     }
     .icongroup{
         display:flex;
@@ -348,6 +436,9 @@ export default {
             -moz-osx-font-smoothing: grayscale;
             cursor:pointer;
         }
+        .like_active{
+            color:red;
+        }
     }
     .my-reply{
         position:relative;
@@ -362,11 +453,18 @@ export default {
             padding-top: 28px;
             // padding-bottom: 14px;
             /deep/ .el-textarea__inner {
-                resize:none
+                resize:none;
+                border: 2px solid #DCDFE6;
             }
+            /deep/ .el-textarea__inner:focus {
+                outline: 0;
+                border-color: #409EFF;
+            }
+
         }
         .publish{
             margin-bottom:10px;
+            width:100px;
             .reply-btn-box{
                 position:absolute;
                 top:125px;
@@ -420,11 +518,18 @@ export default {
             position: absolute;
             top:0px;
             right:20px;
+            span{
+                cursor: pointer;
+            }
         }
         .icon-btn{
             position: absolute;
             top:5px;
             right:10px;
+            span{
+                cursor: pointer;
+            }
+
         }
         .talk-box{
             padding-left: 50px;
@@ -477,7 +582,7 @@ export default {
                     }
                     &:focus{
                         padding: 8px 8px;
-                        border: 2px solid blue;
+                        border: 2px solid #409eff;
                         box-shadow: none;
                         outline: none;
                     }
@@ -494,9 +599,7 @@ export default {
     .block{
         margin-top:10px;
         padding:0 10px;
-    }
-
-    
+    }   
     
 }
 
@@ -509,30 +612,34 @@ export default {
     line-height: 20px;
     //右侧边栏
     .title{
-        font-size: 20px;
-        border-bottom: 1px #ccc solid;
-        padding:29px 0 16px 0;
+        font-weight: 400;
+        font-size: 18px;
+        padding-bottom: 10px;
+        padding-top:25px;
+        border-bottom: 1px solid #ddd;
 
     }
     .vipgonglue{
         display: block;
-        padding:15px 0;
+        padding:20px 0;
         border-bottom: 1px #ccc solid;
         display: flex;
+        
         .left{
             padding-right:8px;
-
             img{
-                width: 85px;
-                height: 62px;
+                width: 100px;
+                height: 80px;
             }
+
         }
         .right{
-            p:nth-child(1){
-                padding-bottom:25px;
-            }
+            display:flex;
+            flex-direction: column;
+            justify-content: space-between;
             p:last-child{
                 font-size:12px;
+                color: #999;
             }
         }
     }

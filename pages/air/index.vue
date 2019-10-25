@@ -74,7 +74,7 @@ export default {
       url: "/airs/sale",
     }).then(res => {
       const {data} = res.data;
-
+      
       this.sales = data;
     })
 
