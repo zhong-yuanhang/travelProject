@@ -45,7 +45,6 @@ export default {
   },
   mounted() {
     // console.log(this.form);
-
     //请求列表数据
     this.$axios({
       url: "/posts/cities"
@@ -57,8 +56,8 @@ export default {
     });
   }
 };
-</script>
-        
+</script>    
+
 
 <style scoped lang="less">
 .sidebar {
