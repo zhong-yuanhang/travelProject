@@ -91,6 +91,7 @@ export default {
     return {
       //定义空对象
       cities: {},
+      //搜索框定义
       search: "南京市",
       //取反显示
       isShow: false,
