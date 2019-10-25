@@ -1,7 +1,5 @@
 <template>
-  <div>
-      <slot/>   
-  </div>
+    <div>富文本框编辑器</div>
 </template>
 
 <script>
