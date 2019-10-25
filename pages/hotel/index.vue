@@ -1,114 +1,140 @@
 <template>
-  <div style="padding:50px;">
-    <h3>高德地图</h3>
+  <!-- 整个div -->
+  <div class="containerall">
+    <!-- 标题头部 -->
+    <hoteltitle @handleCities="handleCities" />
 
-    <el-row style="margin-bottom:20px;">
-      <el-col :span="5">
-        <el-input placeholder="出发地点" v-model="start"></el-input>
-      </el-col>
-      <el-col :span="5">
-        <el-input placeholder="到达地点" v-model="end"></el-input>
-      </el-col>
-      <el-button :span="2" @click="handleSearch">搜索</el-button>
-    </el-row>
+    <!-- 中间内容区域部分 -->
+    <div class="content">
+      <!-- 文字内容部分 -->
+      <hotelcontent :list="hotelcontent" :cities="cities" />
 
-    <!-- 地图的容器 -->
-    <div id="container"></div> 
-    <div id="panel"></div>
+      <!--高德地图部分 -->
+      <div class="content-right">
+        <!--高德地图部分 -->
+        <div>
+          <!-- 地图的容器 -->
+          <hotelmap />
+        </div>
+      </div>
+    </div>
+
+    <!-- 选择项 -->
+    <hotelchoose />
+
+    <!-- 酒店信息详情 -->
+    <hotelInfo v-for="(item,index) in hotelList" :key="index" :hoteldetail="item" />
   </div>
 </template>
 
 <script>
+//导入子组件
+import hotelmap from "@/components/hotel/map";
+import hoteltitle from "@/components/hotel/title";
+import hotelchoose from "@/components/hotel/choose";
+import hotelcontent from "@/components/hotel/content";
+import hotelInfo from "@/components/hotel/hotelinfo";
+
 export default {
-  data(){
+  data() {
     return {
       start: "",
-      end: ""
-    }
+      end: "",
+      hotelcontent: [],
+      city: "",
+      cities: {},
+      //定义空数组
+      hotelList: []
+    };
   },
 
+  components: {
+    hotelmap,
+    hoteltitle,
+    hotelchoose,
+    hotelcontent,
+    hotelInfo
+  },
   methods: {
-    handleSearch(){
-      this.map();
+    //从子组件中获取给父组件
+    handleCities(cities) {
+      // console.log(cities);
+      this.cities = cities;
     },
-    map(){
-      
-        // 地图对象
-        var map = new AMap.Map('container', {
-          zoom:11,//级别
-          //center: [113.3245904, 23.1066805]//中心点坐标
-        });
-
-        // 点标记
-        // var marker1 = new AMap.Marker({
-        //   content: `<div style="width:20px; height:20px; border-radius: 50px; background:red; color:#fff; text-align:center; line-height: 20px;">99</div>`,
-        //   position:[113.3245904, 23.1066805]//位置
-        // })
-        // var marker2 = new AMap.Marker({
-        //   position:[113.3345904, 23.1266805]//位置
-        // })
-        // var markerList = [marker1, marker2];
-        // map.add(markerList);//添加到地图
-
-        // 异步加载插件
-        AMap.plugin(['AMap.ToolBar','AMap.Driving'],() => {//异步加载插件
-          var toolbar = new AMap.ToolBar();
-          map.addControl(toolbar);
-
-          // 驾车路线的插件
-          var driving = new AMap.Driving({
-            map: map,
-            panel: "panel",
-            policy: AMap.DrivingPolicy.LEAST_TIME
-          });//驾车路线规划
-
-          var points = [
-            { keyword: this.start },
-            { keyword: this.end }
-          ]
-
-          driving.search(points, function (status, result) { 
-          })
-        });
-      }
-  },
-
-  mounted(){
-
-    // 整个页面加载完毕之后执行
-    window.onLoad  = () => {
-      this.map();
+    getHotelInfo(id) {
+      this.$axios({
+        url: `/hotels?&city=${id}`
+      }).then(res => {
+        console.log('88888888',res.data.data);
+        //获取到的数据赋值
+        this.hotelList = res.data.data;
+      });
     }
-
-    // 地图的连接
-    var url = "https://webapi.amap.com/maps?v=1.4.15&key=e3c936027dd8c0a7d48d60c4db2e827e&callback=onLoad";
-    var jsapi = document.createElement('script');
-    jsapi.charset = 'utf-8';
-    jsapi.src = url;
-    document.head.appendChild(jsapi);
+  },
+  mounted() {
+    //酒店信息
+    // this.$axios({
+    //   url: `/cities?name=${this.city}`
+    // }).then(res => {
+    //   //打印数据请求
+    //   console.log(res.data);
+    //   const { data } = res.data;
+    //   this.hotelcontent = data;
+    // });
+    this.getHotelInfo(74);
+  },
+  watch: {
+    cities: {
+      handler(val) {
+        console.log(val);
+        this.getHotelInfo(val.id);
+      },
+      deep: true
+    }
   }
-}
+};
 </script>
 
-<style scoped>
-#container {width:600px; height: 500px; }  
-#panel {
-  position: fixed;
-  background-color: white;
-  max-height: 90%;
-  overflow-y: auto;
-  top: 10px;
-  right: 10px;
-  width: 280px;
+<style scoped lang='less'>
+* {
+  margin: 0;
+  padding: 0;
 }
-#panel .amap-call {
-  background-color: #009cf9;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-#panel .amap-lib-driving {
-border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  overflow: hidden;
+//整个div
+.containerall {
+  width: 1000px;
+  margin: 0 auto;
+
+  .price {
+    width: 98px;
+    height: 42px;
+    background-color: #409eff;
+    border-color: #409eff;
+    color: #fff;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .gonglue {
+    height: 75px;
+    display: flex;
+  }
+
+  .quyu {
+    height: 150px;
+
+    display: flex;
+  }
+
+  .content {
+    display: flex;
+    .content-left {
+      flex: 2;
+    }
+    .content-right {
+      flex: 1;
+    }
+  }
 }
 </style>
